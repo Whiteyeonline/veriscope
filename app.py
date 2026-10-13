@@ -64,13 +64,20 @@ def get_pagespeed_data(url):
     }
 
 def generate_ai_summary(url, scores):
-    model = genai.GenerativeModel('gemini-1.5-flash')
     prompt = f"""Act as a strict technical SEO auditor. I just audited {url}. 
     Scores out of 100: Performance ({scores['Performance']}), SEO ({scores['SEO']}), Best Practices ({scores['Best Practices']}). 
     Write a short, professional, 3-sentence executive summary for the business owner explaining what these scores mean, the business impact of a slow site, and the urgency to fix it. No fluff."""
     
-    response = model.generate_content(prompt)
-    return response.text
+    try:
+        # Try the latest Flash model first
+        model = genai.GenerativeModel('gemini-1.5-flash-latest')
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception:
+        # If the API key lacks access to 1.5 Flash, fallback to the guaranteed base model
+        model = genai.GenerativeModel('gemini-pro')
+        response = model.generate_content(prompt)
+        return response.text
 
 def create_pdf(url, data, ssl_status, ai_summary):
     buffer = BytesIO()
@@ -166,4 +173,4 @@ if st.button("Generate Free PDF Audit", type="primary"):
             else:
                 status.update(label="Failed to fetch data.", state="error", expanded=False)
                 st.error("Could not fetch data. Ensure the site is live and allows bots.")
-          
+    
