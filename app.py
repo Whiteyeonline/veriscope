@@ -68,8 +68,8 @@ def generate_ai_summary(url, scores):
     Scores out of 100: Performance ({scores['Performance']}), SEO ({scores['SEO']}), Best Practices ({scores['Best Practices']}). 
     Write a short, professional, 3-sentence executive summary for the business owner explaining what these scores mean, the business impact of a slow site, and the urgency to fix it. No fluff."""
     
-    # Safely call the stable flash model
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    # Update to the active 2.5 Flash model
+    model = genai.GenerativeModel('gemini-2.5-flash')
     response = model.generate_content(prompt)
     return response.text
 
